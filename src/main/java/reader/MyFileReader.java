@@ -22,24 +22,18 @@ public class MyFileReader {
 */
     public void printJavaFiles() throws IOException {
         File testDirectory = new File(this.path);
-        File[] files = testDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                String name = pathname.getName().toLowerCase();
-                return name.endsWith(".java") && pathname.isFile();
-            }
+        File[] files = testDirectory.listFiles(pathname -> {
+            String name = pathname.getName().toLowerCase();
+            return name.endsWith(".java") && pathname.isFile();
         });
         System.out.println(files);
     }
 
     public File[] getJavaFiles() throws IOException {
         File testDirectory = new File(this.path);
-        return testDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                String name = pathname.getName().toLowerCase();
-                return name.endsWith(".java") && pathname.isFile();
-            }
+        return testDirectory.listFiles(pathname -> {
+            String name = pathname.getName().toLowerCase();
+            return name.endsWith(".java") && pathname.isFile();
         });
     }
 
