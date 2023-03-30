@@ -13,7 +13,7 @@ public class TestGUI {
     static public void main(String[] args) {
 
 
-        String path = "/Users/mattia/Desktop/Università";
+        String path = "./sources";
         MyModel model = new MyModel(path);
         MyController controller = new MyController(model);
         MyView view = new MyView(controller);
