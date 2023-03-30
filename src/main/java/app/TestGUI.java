@@ -1,4 +1,4 @@
-package nodeadlock_example;
+package app;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class TestGUI {
@@ -14,9 +13,9 @@ public class TestGUI {
 
 
         String path = "./sources";
-        MyModel model = new MyModel(path);
-        MyController controller = new MyController(model);
-        MyView view = new MyView(controller);
+        Model model = new Model(path);
+        Controller controller = new Controller(model);
+        View view = new View(controller);
         model.addObserver(view);
         view.setVisible(true);
 
@@ -37,7 +36,7 @@ public class TestGUI {
         }
 
         Set<Path> filesPerThread = new HashSet<>();
-        Set<MyAgent> agents = new HashSet<>();
+        Set<CounterAgent> agents = new HashSet<>();
         long startTime = System.currentTimeMillis();
 
         int counter = 0;
@@ -45,14 +44,14 @@ public class TestGUI {
             counter++;
             filesPerThread.add(file);
             if (counter % filesPerCore == 0) {
-                MyAgent agent = new MyAgent(model, new HashSet<>(filesPerThread));
+                CounterAgent agent = new CounterAgent(model, new HashSet<>(filesPerThread));
                 agent.start();
                 agents.add(agent);
                 filesPerThread.clear();
             }
         }
 
-        for (MyAgent agent: agents) {
+        for (CounterAgent agent: agents) {
             try {
                 agent.join();
             } catch (InterruptedException e) {

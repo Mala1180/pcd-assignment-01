@@ -1,11 +1,11 @@
-package nodeadlock_example;
+package app;
 
 
-public class MyController {
+public class Controller {
 
-    private final MyModel model;
+    private final Model model;
 
-    public MyController(MyModel model) {
+    public Controller(Model model) {
         this.model = model;
     }
 

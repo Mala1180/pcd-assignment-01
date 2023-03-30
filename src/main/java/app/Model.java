@@ -1,16 +1,16 @@
-package nodeadlock_example;
+package app;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyModel {
+public class Model {
 
     private List<ModelObserver> observers;
     private int state;
 
     private String directoryPath;
 
-    public MyModel(final String directoryPath) {
+    public Model(final String directoryPath) {
         state = 0;
         this.directoryPath = directoryPath;
         observers = new ArrayList<ModelObserver>();

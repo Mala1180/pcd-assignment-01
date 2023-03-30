@@ -1,4 +1,4 @@
-target = lab02.jpf.TestCheckAct
+target = jpf.example.TestCheckAct
 
 classpath=build/classes/java/main
 

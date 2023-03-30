@@ -1,16 +1,16 @@
-package nodeadlock_example;
+package app;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-public class MyAgent extends Thread {
+public class CounterAgent extends Thread {
 
-    private final MyModel model;
+    private final Model model;
     private final Set<Path> filesPerThread;
 
-    public MyAgent(MyModel model, Set<Path> filesPerThread) {
+    public CounterAgent(Model model, Set<Path> filesPerThread) {
         this.model = model;
         this.filesPerThread = filesPerThread;
     }

@@ -1,4 +1,4 @@
-package nodeadlock_example;
+package app;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -8,11 +8,11 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-class MyView extends JFrame implements ActionListener, ModelObserver {
+class View extends JFrame implements ActionListener, ModelObserver {
 
-    private MyController controller;
+    private Controller controller;
 
-    public MyView(MyController controller) {
+    public View(Controller controller) {
         super("My View");
 
         this.controller = controller;
@@ -99,7 +99,7 @@ class MyView extends JFrame implements ActionListener, ModelObserver {
     }
 
     @Override
-    public void modelUpdated(MyModel model) {
+    public void modelUpdated(Model model) {
         try {
             System.out.println("[View] model updated => updating the view");
             SwingUtilities.invokeLater(() -> {
