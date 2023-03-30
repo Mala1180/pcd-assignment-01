@@ -32,12 +32,5 @@ public class CounterAgent extends Thread {
             throw new RuntimeException(e);
         }
 
-//        while (true) {
-//            try {
-//                model.update();
-//                Thread.sleep(500);
-//            } catch (Exception ex) {
-//            }
-//        }
     }
 }
