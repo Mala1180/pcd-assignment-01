@@ -10,76 +10,76 @@ import javax.swing.*;
 
 class MyView extends JFrame implements ActionListener, ModelObserver {
 
-	private MyController controller;
-	
-	public MyView(MyController controller) {
-		super("My View");
-		
-		this.controller = controller;
-		
-		setSize(500, 400);
-		setResizable(false);
+    private MyController controller;
 
-		//JFileChooser dirChooser = new JFileChooser();
-		//da sostituire con JTextField dirTxt, cosi non devo mettere il path a mano.
+    public MyView(MyController controller) {
+        super("My View");
 
-		//parameters panel -> BorderLayout.NORTH
-		JPanel parametersPanel = new JPanel();
+        this.controller = controller;
 
-		//dir panel e interval panel inclusi in inline panel (horizzontal)
-		JPanel dirPanel = new JPanel();
-		JLabel dirLabel = new JLabel("Dir:");
-		JTextField dirTxt = new JTextField(20);
-		dirPanel.add(dirLabel);
-		dirPanel.add(dirTxt);
+        setSize(500, 400);
+        setResizable(false);
 
-		JPanel intPanel = new JPanel();
-		JLabel intLabel = new JLabel("Int:");
-		JTextField intTxt = new JTextField(5);
-		intPanel.add(intLabel);
-		intPanel.add(intTxt);
+        //JFileChooser dirChooser = new JFileChooser();
+        //da sostituire con JTextField dirTxt, cosi non devo mettere il path a mano.
 
-		JPanel maxLinesPanel = new JPanel();
-		JLabel maxLinesLabel = new JLabel("Max Lines:");
-		JTextField maxLinesTxt = new JTextField(5);
-		maxLinesPanel.add(maxLinesLabel);
-		maxLinesPanel.add(maxLinesTxt);
+        //parameters panel -> BorderLayout.NORTH
+        JPanel parametersPanel = new JPanel();
 
-		JPanel inlinePanel = new JPanel();
-		inlinePanel.add(intPanel);
-		inlinePanel.add(maxLinesPanel);
-		parametersPanel.setLayout(new BoxLayout(parametersPanel, BoxLayout.X_AXIS));
+        //dir panel e interval panel inclusi in inline panel (horizzontal)
+        JPanel dirPanel = new JPanel();
+        JLabel dirLabel = new JLabel("Dir:");
+        JTextField dirTxt = new JTextField(20);
+        dirPanel.add(dirLabel);
+        dirPanel.add(dirTxt);
 
-		parametersPanel.add(dirPanel);
-		parametersPanel.add(inlinePanel);
-		parametersPanel.setLayout(new BoxLayout(parametersPanel, BoxLayout.Y_AXIS));
+        JPanel intPanel = new JPanel();
+        JLabel intLabel = new JLabel("Int:");
+        JTextField intTxt = new JTextField(5);
+        intPanel.add(intLabel);
+        intPanel.add(intTxt);
 
-		//action panel -> BorderLayout.SOUTH
-		JPanel actionPanel = new JPanel();
+        JPanel maxLinesPanel = new JPanel();
+        JLabel maxLinesLabel = new JLabel("Max Lines:");
+        JTextField maxLinesTxt = new JTextField(5);
+        maxLinesPanel.add(maxLinesLabel);
+        maxLinesPanel.add(maxLinesTxt);
 
-		JButton startBtn = new JButton("Start");
-		startBtn.addActionListener(this);
-		JButton stopBtn = new JButton("Stop");
-		stopBtn.addActionListener(this);
+        JPanel inlinePanel = new JPanel();
+        inlinePanel.add(intPanel);
+        inlinePanel.add(maxLinesPanel);
+        parametersPanel.setLayout(new BoxLayout(parametersPanel, BoxLayout.X_AXIS));
 
-		actionPanel.add(startBtn);
-		actionPanel.add(stopBtn);
+        parametersPanel.add(dirPanel);
+        parametersPanel.add(inlinePanel);
+        parametersPanel.setLayout(new BoxLayout(parametersPanel, BoxLayout.Y_AXIS));
 
-		//------------------------------------
-		
-		setLayout(new BorderLayout());
-	    add(parametersPanel,BorderLayout.NORTH);
-		add(actionPanel,BorderLayout.SOUTH);
-	    		
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent ev) {
-				System.exit(-1);
-			}
-		});
-	}
-	
-	public void actionPerformed(ActionEvent ev) {
-		System.out.println(ev.getActionCommand());
+        //action panel -> BorderLayout.SOUTH
+        JPanel actionPanel = new JPanel();
+
+        JButton startBtn = new JButton("Start");
+        startBtn.addActionListener(this);
+        JButton stopBtn = new JButton("Stop");
+        stopBtn.addActionListener(this);
+
+        actionPanel.add(startBtn);
+        actionPanel.add(stopBtn);
+
+        //------------------------------------
+
+        setLayout(new BorderLayout());
+        add(parametersPanel, BorderLayout.NORTH);
+        add(actionPanel, BorderLayout.SOUTH);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent ev) {
+                System.exit(-1);
+            }
+        });
+    }
+
+    public void actionPerformed(ActionEvent ev) {
+        System.out.println(ev.getActionCommand());
 		/*if (ev.getSource() == openButton) {
 			int returnVal = fc.showOpenDialog(FileChooserDemo.this);
 
@@ -91,22 +91,22 @@ class MyView extends JFrame implements ActionListener, ModelObserver {
 				log.append("Open command cancelled by user." + newline);
 			}
 		}*/
-		try {
-			controller.processEvent(ev.getActionCommand());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+        try {
+            controller.processEvent(ev.getActionCommand());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	@Override
-	public void modelUpdated(MyModel model) {
-		try {
-			System.out.println("[View] model updated => updating the view");
-			SwingUtilities.invokeLater(() -> {
-				//dirTxt.setText("state: " + model.getState());
-			});
-		} catch (Exception ex){
-			ex.printStackTrace();
-		}
-	}
+    @Override
+    public void modelUpdated(MyModel model) {
+        try {
+            System.out.println("[View] model updated => updating the view");
+            SwingUtilities.invokeLater(() -> {
+                //dirTxt.setText("state: " + model.getState());
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
