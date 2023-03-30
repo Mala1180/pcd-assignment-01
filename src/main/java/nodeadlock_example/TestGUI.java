@@ -28,7 +28,7 @@ public class TestGUI {
             throw new RuntimeException(e);
         }
 
-        int cores =  3;// Runtime.getRuntime().availableProcessors() + 1;
+        int cores = Runtime.getRuntime().availableProcessors() + 1;
         int filesPerCore;
         if (files.size() < cores) {
             filesPerCore = 1;
@@ -62,7 +62,7 @@ public class TestGUI {
 
         long stopTime = System.currentTimeMillis();
         System.out.println("Total files: " + files.size());
-        System.out.println("Files per cqore: " + filesPerCore);
+        System.out.println("Files per core: " + filesPerCore);
         System.out.println("Execution time: " + (stopTime - startTime) + " ms");
     }
 
