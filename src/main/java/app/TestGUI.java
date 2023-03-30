@@ -6,7 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import static java.util.stream.Collectors.toUnmodifiableSet;
+
+import static java.util.stream.Collectors.toSet;
 
 public class TestGUI {
     static public void main(String[] args) {
@@ -22,7 +23,7 @@ public class TestGUI {
         Set<Path> files;
         try {
             files = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                    .filter(file -> file.toString().endsWith(".java")).collect(toUnmodifiableSet());
+                    .filter(file -> file.toString().endsWith(".java")).collect(toSet());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
