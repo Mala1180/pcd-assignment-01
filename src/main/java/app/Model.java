@@ -1,9 +1,7 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.*;
 
 public class Model {
 
@@ -14,20 +12,23 @@ public class Model {
     private Integer interval;
     private Integer maxLines;
 
-    private Set<Integer> distribution;
+    private final Map<String, Integer> distributions = new HashMap<>();
+    private final Set<Path> topFiles = new HashSet<>();
 
     public Model(final String directoryPath) {
         //this.state = 0;
         this.directoryPath = directoryPath;
         this.observers = new ArrayList<>();
-        this.distribution = new HashSet<>();
     }
 
-    public void setParameters(String directoryPath, Integer interval, Integer maxLines) {
+    public void setParameters(String directoryPath, Integer intervals, Integer maxLines) {
         this.directoryPath = directoryPath;
-        this.interval = interval;
+        this.interval = intervals;
         this.maxLines = maxLines;
-        //TODO: inizializing the set with interval dimension, slide es: 5
+        for (int i = 0; i < intervals; i++) {
+            distributions.put("Interval " + i, 0);
+        }
+        System.out.println(distributions);
     }
 
     /*public synchronized void update() {
@@ -50,8 +51,8 @@ public class Model {
         return state;
     }*/
 
-    public synchronized Set<Integer> getDistribution() {
-        return this.distribution;
+    public synchronized Map<String, Integer> getDistributions() {
+        return this.distributions;
     }
 
     public String getDirectoryPath() {

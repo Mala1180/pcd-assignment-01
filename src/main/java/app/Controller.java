@@ -18,15 +18,21 @@ public class Controller {
         this.model = model;
     }
 
-    public void setParameters(String directoryPath, Integer interval, Integer maxLines) {
-        model.setParameters(directoryPath, interval, maxLines);
+    public void setParameters(String directoryPath, Integer intervals, Integer maxLines) {
+        model.setParameters(directoryPath, intervals, maxLines);
     }
 
     public void processEvent(String event) {
         switch (Commands.valueOf(event)) {
-            case START -> startCounting();
-            case STOP -> stopCounting();
-            case RESET -> resetCounter();
+            case START:
+                startCounting();
+                break;
+            case STOP:
+                stopCounting();
+                break;
+            case RESET:
+                resetCounter();
+                break;
         }
     }
 

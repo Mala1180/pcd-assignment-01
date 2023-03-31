@@ -1,6 +1,7 @@
 package app;
 
-public class TestGUI {
+public class Main {
+
     static public void main(String[] args) {
         String path = "./sources";
         Model model = new Model(path);
@@ -9,4 +10,5 @@ public class TestGUI {
         model.addObserver(view);
         view.setVisible(true);
     }
+
 }

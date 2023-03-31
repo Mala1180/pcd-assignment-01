@@ -23,9 +23,13 @@ class View extends JFrame implements ActionListener, ModelObserver {
     public void actionPerformed(ActionEvent ev) {
         try {
             switch (Commands.valueOf(ev.getActionCommand())) {
-                case START -> controller.setParameters("./sources", 5, 1000);
+                case START:
+                    controller.setParameters("./sources", 5, 1000);
+                    break;
                 //TODO: read parameters from input fields (above int=5 and maxLines=1000 like in assignment example)
-                case RESET -> controller.setParameters("", 0, 0);
+                case RESET:
+                    controller.setParameters("", 0, 0);
+                    break;
                 //TODO: to clear input fields
             }
             controller.processEvent(ev.getActionCommand());
