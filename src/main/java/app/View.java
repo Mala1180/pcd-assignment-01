@@ -13,6 +13,10 @@ import javax.swing.*;
 class View extends JFrame implements ActionListener, ModelObserver {
     private final Controller controller;
 
+    private final DefaultListModel<String> distributionListModel = new DefaultListModel<>();
+    private final DefaultListModel<String> topFilesListModel = new DefaultListModel<>();
+
+
     public View(Controller controller) {
         super("Line Counter");
 
@@ -28,6 +32,7 @@ class View extends JFrame implements ActionListener, ModelObserver {
                     break;
                 //TODO: read parameters from input fields (above int=5 and maxLines=1000 like in assignment example)
                 case RESET:
+                    clearLists();
                     controller.setParameters("", 0, 0);
                     break;
                 //TODO: to clear input fields
@@ -43,7 +48,13 @@ class View extends JFrame implements ActionListener, ModelObserver {
         try {
             System.out.println("[View] model updated => updating the view");
             SwingUtilities.invokeLater(() -> {
-                //dirTxt.setText("state: " + model.getState());
+                clearLists();
+                model.getDistributions().forEach((k, v) -> {
+                    this.distributionListModel.addElement(k + " " + v);
+                });
+                model.getTopFiles().forEach((k, v) -> {
+                    this.topFilesListModel.addElement(k + " " + v);
+                });
             });
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -52,7 +63,7 @@ class View extends JFrame implements ActionListener, ModelObserver {
 
 
     private void setupGUI() {
-        setSize(500, 400);
+        setSize(800, 600);
         setResizable(false);
 
         //JFileChooser dirChooser = new JFileChooser();
@@ -96,25 +107,10 @@ class View extends JFrame implements ActionListener, ModelObserver {
 
         JPanel dataPanel = new JPanel();
 
-        DefaultListModel<String> distributionListModel = new DefaultListModel<>();
-
-        distributionListModel.addElement("Item1");
-        distributionListModel.addElement("Item2");
-        distributionListModel.addElement("Item3");
-        distributionListModel.addElement("Item4");
-
 
         JList<String> distributionList = new JList<>(distributionListModel);
         distributionList.setFixedCellWidth(200);
         distributionList.setFixedCellHeight(25);
-
-
-        DefaultListModel<String> topFilesListModel = new DefaultListModel<>();
-
-        topFilesListModel.addElement("Item1");
-        topFilesListModel.addElement("Item2");
-        topFilesListModel.addElement("Item3");
-        topFilesListModel.addElement("Item4");
 
 
         JList<String> topFilesList = new JList<>(topFilesListModel);
@@ -169,5 +165,11 @@ class View extends JFrame implements ActionListener, ModelObserver {
                 System.exit(-1);
             }
         });
+
+    }
+
+    private void clearLists() {
+        distributionListModel.clear();
+        topFilesListModel.clear();
     }
 }

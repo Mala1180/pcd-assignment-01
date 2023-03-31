@@ -18,7 +18,6 @@ public class CounterAgent extends Thread {
     public void run() {
         try {
             System.out.println("new thread");
-
             for (Path file : this.filesPerThread) {
                 int lines = 0;
                 System.out.println(file.getFileName());
@@ -26,6 +25,11 @@ public class CounterAgent extends Thread {
                 System.out.println("File " + file.getFileName() + " has lines: " + lines);
                 //model.update();
                 model.updateCounter(file.getFileName().toString(), lines);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         } catch (IOException e) {
