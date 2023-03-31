@@ -20,13 +20,12 @@ public class CounterAgent extends Thread {
             System.out.println("new thread");
             for (Path file : this.filesPerThread) {
                 int lines = 0;
-                System.out.println(file.getFileName());
                 lines += Files.lines(file).count();
                 System.out.println("File " + file.getFileName() + " has lines: " + lines);
                 //model.update();
                 model.updateCounter(file.getFileName().toString(), lines);
                 try {
-                    Thread.sleep(500);
+                    sleep(50);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

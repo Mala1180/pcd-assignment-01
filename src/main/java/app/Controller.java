@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-//TODO: maybe now it's not required the static one?
 import static java.util.stream.Collectors.toSet;
 
 public class Controller {
@@ -23,17 +22,28 @@ public class Controller {
     }
 
     public void processEvent(String event) {
-        switch (Commands.valueOf(event)) {
-            case START:
-                startCounting();
-                break;
-            case STOP:
-                stopCounting();
-                break;
-            case RESET:
-                resetCounter();
-                break;
+        try {
+            new Thread(() -> {
+                try {
+                    switch (Commands.valueOf(event)) {
+                        case START:
+                            startCounting();
+                            break;
+                        case STOP:
+                            stopCounting();
+                            break;
+                        case RESET:
+                            resetCounter();
+                            break;
+                    }
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            }).start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
     }
 
 

@@ -16,9 +16,7 @@ public class Model {
     private final Map<String, Integer> topFiles = new HashMap<>();
 
 
-    public Model(final String directoryPath) {
-        //this.state = 0;
-        this.directoryPath = directoryPath;
+    public Model() {
         this.observers = new ArrayList<>();
     }
 
@@ -44,7 +42,6 @@ public class Model {
     }
 
     private synchronized void updateDistribution(String fileName, Integer fileLines) {
-        //TODO with monitor, to decide if in external class
         int linesPerInterval = maxLines / (intervals - 1);
         int index = fileLines / linesPerInterval;
         if (fileLines > maxLines) {
@@ -73,7 +70,7 @@ public class Model {
     }
 
     public String getDirectoryPath() {
-        return directoryPath;
+        return this.directoryPath;
     }
 
     public void addObserver(ModelObserver obs) {
