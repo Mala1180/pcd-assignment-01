@@ -1,4 +1,6 @@
-package app;
+package app.model;
+
+import app.view.ModelObserver;
 
 import java.util.*;
 

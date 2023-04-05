@@ -1,4 +1,6 @@
-package app;
+package app.model;
+
+import app.model.Model;
 
 import java.io.IOException;
 import java.nio.file.Files;

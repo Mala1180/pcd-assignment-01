@@ -1,6 +1,8 @@
-package app;
+package app.controller;
 
-import utils.Commands;
+import app.model.CounterAgent;
+import app.model.Model;
+import app.utils.Commands;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,9 +10,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+
 import static java.util.stream.Collectors.toSet;
 
 public class Controller {
+
+    /**
+     * Main method for testing with java pathfinder
+     */
+    static public void main(String[] args) {
+        Model model = new Model();
+        model.setParameters(System.getProperty("user.dir"), 5, 100);
+        Controller controller = new Controller(model);
+        controller.startCounting();
+    }
+
     private final Model model;
 
     public Controller(Model model) {
@@ -36,7 +50,7 @@ public class Controller {
                             resetCounter();
                             break;
                     }
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }).start();

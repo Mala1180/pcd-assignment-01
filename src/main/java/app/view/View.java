@@ -1,6 +1,9 @@
-package app;
+package app.view;
 
-import utils.Commands;
+import app.controller.Controller;
+import app.model.Model;
+import app.utils.Commands;
+import app.view.ModelObserver;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,7 +13,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-class View extends JFrame implements ActionListener, ModelObserver {
+public class View extends JFrame implements ActionListener, ModelObserver {
     private final Controller controller;
 
     private final DefaultListModel<String> distributionListModel = new DefaultListModel<>();

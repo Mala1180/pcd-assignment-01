@@ -1,4 +1,6 @@
-package app;
+package app.model;
+
+import app.model.Model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,7 @@ public class Monitor {
     }
 
     public synchronized void updateDistributions(String fileName, Integer fileLines, Integer intervals, Integer maxLines) {
+//        Verify.beginAtomic();
         int linesPerInterval = maxLines / (intervals - 1);
         int index = fileLines / linesPerInterval;
         if (fileLines > maxLines) {
@@ -34,6 +37,7 @@ public class Monitor {
                 topFiles.remove(minEntry.getKey());
             }
         }
+//        Verify.endAtomic();
     }
 
     public synchronized Map<String, Integer> getDistributions() {
