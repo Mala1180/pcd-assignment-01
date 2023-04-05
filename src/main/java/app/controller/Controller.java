@@ -4,12 +4,13 @@ import app.model.CounterAgent;
 import app.model.Model;
 import app.utils.Commands;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -63,13 +64,13 @@ public class Controller {
 
     private void startCounting() {
         Set<Path> files;
-        try {
-            files = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                    .filter(file -> file.toString().endsWith(".java") && !file.toString().contains("/file-")).collect(toSet());
+
+        try (Stream<Path> stream = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())) {
+            System.out.println(model.getDirectoryPath());
+            files = stream.filter(file -> file.toString().endsWith(".java")).collect(toSet());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         int cores = Runtime.getRuntime().availableProcessors() + 1;
         int filesPerCore;
         if (files.size() < cores) {
