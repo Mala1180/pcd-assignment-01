@@ -51,7 +51,7 @@ public class Controller {
         Set<Path> files;
         try {
             files = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                    .filter(file -> file.toString().endsWith(".java")).collect(toSet());
+                    .filter(file -> file.toString().endsWith(".java") && !file.toString().contains("/file-")).collect(toSet());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

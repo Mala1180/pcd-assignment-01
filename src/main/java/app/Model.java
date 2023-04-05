@@ -4,16 +4,13 @@ import java.util.*;
 
 public class Model {
 
-    private final List<ModelObserver> observers;
-    //private int state;
+    public static final int TOP_FILES_NUMBER = 5;
 
+    private final List<ModelObserver> observers;
     private String directoryPath;
     private Integer intervals;
     private Integer maxLines;
-
-    private static final int TOP_FILES_NUMBER = 5;
-    private final Map<String, Integer> distributions = new HashMap<>();
-    private final Map<String, Integer> topFiles = new HashMap<>();
+    private Monitor monitor;
 
 
     public Model() {
@@ -24,49 +21,12 @@ public class Model {
         this.directoryPath = directoryPath;
         this.intervals = intervals;
         this.maxLines = maxLines;
-        for (int i = 0; i < intervals; i++) {
-            distributions.put("Interval " + (i + 1), 0);
-        }
-        System.out.println(distributions);
+        this.monitor = new Monitor(intervals);
     }
 
-    /*public synchronized void update() {
-        //state++;
-        //notifyObservers();
-    }*/
-
-    public synchronized void updateCounter(String fileName, Integer lines) {
-        //TODO: to add monitor for correct accessing to the distribution set
-        updateDistribution(fileName, lines);
+    public void updateCounter(String fileName, Integer lines) {
+        this.monitor.updateDistributions(fileName, lines, intervals, maxLines);
         notifyObservers();
-    }
-
-    private synchronized void updateDistribution(String fileName, Integer fileLines) {
-        int linesPerInterval = maxLines / (intervals - 1);
-        int index = fileLines / linesPerInterval;
-        if (fileLines > maxLines) {
-            index = intervals - 1;
-        }
-        String key = "Interval " + (index + 1);
-        System.out.println(key);
-        distributions.put(key, distributions.get(key) + 1);
-        if (topFiles.size() < TOP_FILES_NUMBER) {
-            topFiles.put(fileName, fileLines);
-        } else {
-            var minEntry = topFiles.entrySet().stream().min(Map.Entry.comparingByValue()).get();
-            if (minEntry.getValue() < fileLines) {
-                topFiles.put(fileName, fileLines);
-                topFiles.remove(minEntry.getKey());
-            }
-        }
-    }
-
-    public synchronized Map<String, Integer> getDistributions() {
-        return this.distributions;
-    }
-
-    public synchronized Map<String, Integer> getTopFiles() {
-        return this.topFiles;
     }
 
     public String getDirectoryPath() {
@@ -74,12 +34,20 @@ public class Model {
     }
 
     public void addObserver(ModelObserver obs) {
-        observers.add(obs);
+        this.observers.add(obs);
     }
 
     private void notifyObservers() {
-        for (ModelObserver obs : observers) {
+        for (ModelObserver obs : this.observers) {
             obs.modelUpdated(this);
         }
+    }
+
+    public Map<String, Integer> getDistributions() {
+        return this.monitor.getDistributions();
+    }
+
+    public Map<String, Integer> getTopFiles() {
+        return this.monitor.getTopFiles();
     }
 }

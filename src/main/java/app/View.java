@@ -2,7 +2,7 @@ package app;
 
 import utils.Commands;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -16,10 +16,14 @@ class View extends JFrame implements ActionListener, ModelObserver {
     private final DefaultListModel<String> distributionListModel = new DefaultListModel<>();
     private final DefaultListModel<String> topFilesListModel = new DefaultListModel<>();
 
+    private final JFileChooser chooser = new JFileChooser();
+    private final JTextField directoryTxt = new JTextField(20);
+    private final JTextField intervalsTxt = new JTextField(5);
+    private final JTextField maxLinesTxt = new JTextField(5);
+
 
     public View(Controller controller) {
         super("Line Counter");
-
         this.controller = controller;
         setupGUI();
     }
@@ -28,12 +32,14 @@ class View extends JFrame implements ActionListener, ModelObserver {
         try {
             switch (Commands.valueOf(ev.getActionCommand())) {
                 case START:
-                    controller.setParameters("./sources", 5, 1000);
+                    if(!directoryTxt.getText().equals("")
+                            && Integer.parseInt(intervalsTxt.getText()) > 0
+                            && Integer.parseInt(maxLinesTxt.getText()) > 0) {
+                        controller.setParameters(directoryTxt.getText(), Integer.parseInt(intervalsTxt.getText()), Integer.parseInt(maxLinesTxt.getText()));
+                    }
                     break;
-                //TODO: read parameters from input fields (above int=5 and maxLines=1000 like in assignment example)
                 case RESET:
-                    clearLists();
-                    controller.setParameters("", 0, 0);
+                    resetParameters();
                     break;
                 //TODO: to clear input fields
             }
@@ -48,7 +54,8 @@ class View extends JFrame implements ActionListener, ModelObserver {
         try {
             System.out.println("[View] model updated => updating the view");
             SwingUtilities.invokeLater(() -> {
-                clearLists();
+                this.distributionListModel.clear();
+                this.topFilesListModel.clear();
                 model.getDistributions().forEach((k, v) -> {
                     this.distributionListModel.addElement(k + " " + v);
                 });
@@ -66,29 +73,44 @@ class View extends JFrame implements ActionListener, ModelObserver {
         setSize(800, 600);
         setResizable(false);
 
-        //JFileChooser dirChooser = new JFileChooser();
-        //da sostituire con JTextField dirTxt, cosi non devo mettere il path a mano.
+
+        directoryTxt.setText("/Users/mattia/Desktop/Università/Triennale");
+        intervalsTxt.setText("5");
+        maxLinesTxt.setText("1000");
 
         //------------- START PARAMETERS PANEL -------------
 
         JPanel parametersPanel = new JPanel();
 
-        //dir panel e interval panel inclusi in inline panel (horizzontal)
+        //dir panel e interval panel inclusi in inline panel (horizontal)
         JPanel dirPanel = new JPanel();
         JLabel dirLabel = new JLabel("Dir:");
-        JTextField dirTxt = new JTextField(20);
         dirPanel.add(dirLabel);
-        dirPanel.add(dirTxt);
+        dirPanel.add(directoryTxt);
+
+        JButton openFileChooserBtn = new JButton("Scegli directory");
+        openFileChooserBtn.setActionCommand(Commands.OPEN_FILE_DIALOG.toString());
+        openFileChooserBtn.addActionListener(e -> {
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                directoryTxt.setText(chooser.getSelectedFile().toString());
+            } else {
+                directoryTxt.setText("No Selection");
+            }
+
+        });
+        dirPanel.add(openFileChooserBtn);
+
+        chooser.setDialogTitle("Choose the directory to scan");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
 
         JPanel intPanel = new JPanel();
         JLabel intLabel = new JLabel("Int:");
-        JTextField intTxt = new JTextField(5);
         intPanel.add(intLabel);
-        intPanel.add(intTxt);
+        intPanel.add(intervalsTxt);
 
         JPanel maxLinesPanel = new JPanel();
         JLabel maxLinesLabel = new JLabel("Max Lines:");
-        JTextField maxLinesTxt = new JTextField(5);
         maxLinesPanel.add(maxLinesLabel);
         maxLinesPanel.add(maxLinesTxt);
 
@@ -107,28 +129,25 @@ class View extends JFrame implements ActionListener, ModelObserver {
 
         JPanel dataPanel = new JPanel();
 
-
         JList<String> distributionList = new JList<>(distributionListModel);
         distributionList.setFixedCellWidth(200);
         distributionList.setFixedCellHeight(25);
 
-
         JList<String> topFilesList = new JList<>(topFilesListModel);
         topFilesList.setFixedCellWidth(200);
         topFilesList.setFixedCellHeight(25);
+        topFilesList.setAlignmentX(CENTER_ALIGNMENT);
+        distributionList.setAlignmentX(CENTER_ALIGNMENT);
+        topFilesList.setAlignmentY(CENTER_ALIGNMENT);
+        distributionList.setAlignmentY(CENTER_ALIGNMENT);
+        //topFilesList.setAlignmentX(SwingUtilities.CENTER);topFilesList.setAlignmentY(SwingUtilities.CENTER);
+        //distributionList.setAlignmentX(SwingUtilities.CENTER);distributionList.setAlignmentY(SwingUtilities.CENTER);
 
+
+        /*dataPanel.setAlignmentX(CENTER_ALIGNMENT);
+        dataPanel.setAlignmentY(CENTER_ALIGNMENT);*/
         dataPanel.setLayout(new BoxLayout(dataPanel, BoxLayout.X_AXIS));
 
-
-        /*JScrollPane scrollPaneDistr = new JScrollPane();
-        scrollPaneDistr.setViewportView(distributionList);
-        distributionList.setLayoutOrientation(JList.VERTICAL);
-
-        JScrollPane scrollPaneTopFiles = new JScrollPane();
-        scrollPaneTopFiles.setViewportView(topFilesList);
-        topFilesList.setLayoutOrientation(JList.VERTICAL);*/
-
-        //dataPanel.add(scrollPaneTopFiles);
         dataPanel.add(distributionList);
         dataPanel.add(topFilesList);
 
@@ -156,9 +175,14 @@ class View extends JFrame implements ActionListener, ModelObserver {
         //------------- END ACTION PANEL -------------
 
         setLayout(new BorderLayout());
+
         add(parametersPanel, BorderLayout.NORTH);
+
         add(dataPanel, BorderLayout.CENTER);
+
         add(actionPanel, BorderLayout.SOUTH);
+
+        this.setLocationRelativeTo( null );
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent ev) {
@@ -168,8 +192,12 @@ class View extends JFrame implements ActionListener, ModelObserver {
 
     }
 
-    private void clearLists() {
+    private void resetParameters() {
         distributionListModel.clear();
         topFilesListModel.clear();
+        controller.setParameters("", 0, 0);
+        directoryTxt.setText("");
+        intervalsTxt.setText("");
+        maxLinesTxt.setText("");
     }
 }

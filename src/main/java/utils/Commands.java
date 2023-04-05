@@ -4,7 +4,8 @@ public enum Commands {
 
     START("START"),
     STOP("STOP"),
-    RESET("RESET");
+    RESET("RESET"),
+    OPEN_FILE_DIALOG("OPEN_FILE_DIALOG");
 
 
     private final String command;
