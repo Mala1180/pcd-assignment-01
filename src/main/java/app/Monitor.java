@@ -28,7 +28,7 @@ public class Monitor {
         if (topFiles.size() < Model.TOP_FILES_NUMBER) {
             topFiles.put(fileName, fileLines);
         } else {
-            var minEntry = topFiles.entrySet().stream().min(Map.Entry.comparingByValue()).get();
+            Map.Entry<String, Integer> minEntry = topFiles.entrySet().stream().min(Map.Entry.comparingByValue()).get();
             if (minEntry.getValue() < fileLines) {
                 topFiles.put(fileName, fileLines);
                 topFiles.remove(minEntry.getKey());

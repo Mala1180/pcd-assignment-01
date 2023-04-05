@@ -121,6 +121,10 @@ replay_pid*
 **/build/
 !src/**/build/
 
+## JPF Runner
+!jpf-runner/build/
+!jpf-runner/build/*.jar
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
