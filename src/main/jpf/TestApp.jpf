@@ -1,4 +1,4 @@
-target = app.controller.Controller
+target = jpf.TestApp
 
 classpath=build/classes/java/main
 
