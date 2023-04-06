@@ -2,29 +2,20 @@ package app.controller;
 
 import app.model.CounterAgent;
 import app.model.Model;
-import app.utils.Commands;
+import app.utils.Event;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
 public class Controller {
 
-    /**
-     * Main method for testing with java pathfinder
-     */
-    static public void main(String[] args) {
-        Model model = new Model();
-        model.setParameters(System.getProperty("user.dir"), 5, 100);
-        Controller controller = new Controller(model);
-        controller.startCounting();
-    }
 
     private final Model model;
 
@@ -36,11 +27,11 @@ public class Controller {
         model.setParameters(directoryPath, intervals, maxLines);
     }
 
-    public void processEvent(String event) {
+    public void processEvent(Event event) {
         try {
             new Thread(() -> {
                 try {
-                    switch (Commands.valueOf(event)) {
+                    switch (event) {
                         case START:
                             startCounting();
                             break;
@@ -62,7 +53,7 @@ public class Controller {
     }
 
 
-    private void startCounting() {
+    public void startCounting() {
         Set<Path> files;
 
         try (Stream<Path> stream = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())) {

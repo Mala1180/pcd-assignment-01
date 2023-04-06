@@ -1,6 +1,6 @@
 package app.utils;
 
-public enum Commands {
+public enum Event {
 
     START("START"),
     STOP("STOP"),
@@ -10,11 +10,11 @@ public enum Commands {
 
     private final String command;
 
-    Commands(String command) {
+    Event(String command) {
         this.command = command;
     }
-    @Override
-    public String toString() {
+
+    public String getCommand() {
         return this.command;
     }
 }

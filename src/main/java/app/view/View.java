@@ -2,8 +2,7 @@ package app.view;
 
 import app.controller.Controller;
 import app.model.Model;
-import app.utils.Commands;
-import app.view.ModelObserver;
+import app.utils.Event;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,7 +32,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
 
     public void actionPerformed(ActionEvent ev) {
         try {
-            switch (Commands.valueOf(ev.getActionCommand())) {
+            switch (Event.valueOf(ev.getActionCommand())) {
                 case START:
                     if(!directoryTxt.getText().equals("")
                             && Integer.parseInt(intervalsTxt.getText()) > 0
@@ -46,7 +45,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
                     break;
                 //TODO: to clear input fields
             }
-            controller.processEvent(ev.getActionCommand());
+            controller.processEvent(Event.valueOf(ev.getActionCommand()));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -92,7 +91,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
         dirPanel.add(directoryTxt);
 
         JButton openFileChooserBtn = new JButton("Scegli directory");
-        openFileChooserBtn.setActionCommand(Commands.OPEN_FILE_DIALOG.toString());
+        openFileChooserBtn.setActionCommand(Event.OPEN_FILE_DIALOG.getCommand());
         openFileChooserBtn.addActionListener(e -> {
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 directoryTxt.setText(chooser.getSelectedFile().toString());
@@ -162,13 +161,13 @@ public class View extends JFrame implements ActionListener, ModelObserver {
         JPanel actionPanel = new JPanel();
 
         JButton startBtn = new JButton("Start");
-        startBtn.setActionCommand(Commands.START.toString());
+        startBtn.setActionCommand(Event.START.getCommand());
         startBtn.addActionListener(this);
         JButton stopBtn = new JButton("Stop");
-        stopBtn.setActionCommand(Commands.STOP.toString());
+        stopBtn.setActionCommand(Event.STOP.getCommand());
         stopBtn.addActionListener(this);
         JButton resetBtn = new JButton("Reset");
-        resetBtn.setActionCommand(Commands.RESET.toString());
+        resetBtn.setActionCommand(Event.RESET.getCommand());
         resetBtn.addActionListener(this);
 
         actionPanel.add(resetBtn);
