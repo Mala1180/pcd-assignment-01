@@ -12,7 +12,7 @@ public class TestApp {
      */
     static public void main(String[] args) {
         Model model = new Model();
-        model.setParameters(System.getProperty("user.dir"), 5, 100);
+        model.setParameters(System.getProperty("user.dir"), 5, 1000);
         Controller controller = new Controller(model);
         controller.processEvent(Event.START);
     }

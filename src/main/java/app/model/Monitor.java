@@ -1,7 +1,5 @@
 package app.model;
 
-import app.model.Model;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,12 +7,13 @@ public class Monitor {
 
     private final Map<String, Integer> distributions = new HashMap<>();
     private final Map<String, Integer> topFiles = new HashMap<>();
+    private boolean available = false;
 
     public Monitor(Integer intervals) {
-        for (int i = 0; i < intervals; i++) {
+        for (int i = 1; i < intervals + 1; i++) {
             distributions.put("Interval " + i, 0);
         }
-        for (int i = 0; i < Model.TOP_FILES_NUMBER; i++) {
+        for (int i = 1; i < Model.TOP_FILES_NUMBER + 1; i++) {
             topFiles.put("File " + i, 0);
         }
     }
@@ -27,6 +26,7 @@ public class Monitor {
             index = intervals - 1;
         }
         String key = "Interval " + (index + 1);
+
         distributions.put(key, distributions.get(key) + 1);
         if (topFiles.size() < Model.TOP_FILES_NUMBER) {
             topFiles.put(fileName, fileLines);
@@ -37,10 +37,19 @@ public class Monitor {
                 topFiles.remove(minEntry.getKey());
             }
         }
+        available = true;
+        notifyAll();
 //        Verify.endAtomic();
     }
 
     public synchronized Map<String, Integer> getDistributions() {
+        while (!available) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return new HashMap<>(this.distributions);
     }
 
