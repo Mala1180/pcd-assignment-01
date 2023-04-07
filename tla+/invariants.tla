@@ -30,6 +30,7 @@ define
     MutualExclusion == []~(pc["p1"] = "CS" /\ pc["p2"] = "CS" /\
                            pc["p3"] = "CS" /\ pc["p4"] = "CS" /\ pc["p5"] = "CS")
     ProperFinalValue == <>(counted_files = Len(files))
+    testProperty == [](5 = Len(files[1]))
 end define;
 
 macro wait(s) begin
@@ -117,11 +118,3 @@ Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 \* END TRANSLATION
 
 =============================================================================
-\* Modification History
-\* Last modified Sun Mar 28 19:13:30 CEST 2021 by aricci
-\* Created Sun Mar 28 06:28:17 CEST 2021 by aricci
-
-
-=============================================================================
-\* Modification History
-\* Created Sun Mar 28 19:10:48 CEST 2021 by aricci
