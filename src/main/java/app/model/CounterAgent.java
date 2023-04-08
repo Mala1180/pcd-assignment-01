@@ -1,40 +1,24 @@
 package app.model;
 
-import app.model.Model;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Set;
 
 public class CounterAgent extends Thread {
 
     private final Model model;
-    private final Set<Path> filesPerThread;
+    private final Set<String> stringsPerThread;
 
-    public CounterAgent(Model model, Set<Path> filesPerThread) {
+    public CounterAgent(Model model, Set<String> stringsPerThread) {
         this.model = model;
-        this.filesPerThread = filesPerThread;
+        this.stringsPerThread = stringsPerThread;
     }
 
     public void run() {
-        try {
-            System.out.println("new thread");
-            for (Path file : this.filesPerThread) {
-                int lines = 0;
-                lines += Files.lines(file).count();
-                System.out.println("File " + file.getFileName() + " has lines: " + lines);
-                //model.update();
-                model.updateCounter(file.getFileName().toString(), lines);
-                try {
-                    sleep(50);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        System.out.println("new thread");
+        for (String string : this.stringsPerThread) {
+            int chars = string.length();
+//            System.out.println("Chars: " + chars);
+            //model.update();
+            model.updateCounter(string, chars);
         }
 
     }

@@ -4,12 +4,12 @@ import app.model.CounterAgent;
 import app.model.Model;
 import app.utils.Event;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
@@ -54,35 +54,51 @@ public class Controller {
 
 
     public void startCounting() {
-        Set<Path> files;
+        int numberOfFiles = 50;
+        List<String> strings = new ArrayList<>();
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz";
 
-        try (Stream<Path> stream = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())) {
-            System.out.println(model.getDirectoryPath());
-            files = stream.filter(file -> file.toString().endsWith(".java")).collect(toSet());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        for (int i = 0; i < numberOfFiles; i++) {
+//            if (i % 2 == 0) {
+//                strings.add(chars);
+//                strings.add(chars2);
+//            } else {
+//                strings.add(numbers);
+//            }
+            strings.add(chars);
         }
+
+
+//        Supplier<String> stringSupplier = () -> random.ints(leftLimit, rightLimit + 1)
+//                .limit(ThreadLocalRandom.current().nextInt(minBound, maxBound))
+//                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+//                .toString();
+//
+//        Stream<String> stringsStream = Stream.generate(stringSupplier).limit(ThreadLocalRandom.current().nextInt(minBound, maxBound));
+//        Set<String> strings = new HashSet<>();
+//        Collections.addAll(strings, stringsStream.toArray(String[]::new));
+
         int cores = Runtime.getRuntime().availableProcessors() + 1;
-        int filesPerCore;
-        if (files.size() < cores) {
-            filesPerCore = 1;
+        int stringsPerCore;
+        if (strings.size() < cores) {
+            stringsPerCore = 1;
         } else {
-            filesPerCore = files.size() / cores;
+            stringsPerCore = strings.size() / cores;
         }
 
-        Set<Path> filesPerThread = new HashSet<>();
+        Set<String> stringsPerThread = new HashSet<>();
         Set<CounterAgent> agents = new HashSet<>();
         long startTime = System.currentTimeMillis();
 
         int counter = 0;
-        for (Path file : files) {
+        for (String string : strings) {
             counter++;
-            filesPerThread.add(file);
-            if (counter % filesPerCore == 0) {
-                CounterAgent agent = new CounterAgent(model, new HashSet<>(filesPerThread));
+            stringsPerThread.add(string);
+            if (counter % stringsPerCore == 0) {
+                CounterAgent agent = new CounterAgent(model, new HashSet<>(stringsPerThread));
                 agent.start();
                 agents.add(agent);
-                filesPerThread.clear();
+                stringsPerThread.clear();
             }
         }
 
@@ -95,8 +111,8 @@ public class Controller {
         }
 
         long stopTime = System.currentTimeMillis();
-        System.out.println("Total files: " + files.size());
-        System.out.println("Files per core: " + filesPerCore);
+        System.out.println("Total strings: " + strings.size());
+        System.out.println("Files per core: " + stringsPerCore);
         System.out.println("Execution time: " + (stopTime - startTime) + " ms");
     }
 

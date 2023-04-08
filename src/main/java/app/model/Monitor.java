@@ -1,5 +1,7 @@
 package app.model;
 
+import gov.nasa.jpf.vm.Verify;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +21,7 @@ public class Monitor {
     }
 
     public synchronized void updateDistributions(String fileName, Integer fileLines, Integer intervals, Integer maxLines) {
-//        Verify.beginAtomic();
+        Verify.beginAtomic();
         int linesPerInterval = maxLines / (intervals - 1);
         int index = fileLines / linesPerInterval;
         if (fileLines > maxLines) {
@@ -31,7 +33,7 @@ public class Monitor {
         if (topFiles.size() < Model.TOP_FILES_NUMBER) {
             topFiles.put(fileName, fileLines);
         } else {
-            Map.Entry<String, Integer> minEntry = topFiles.entrySet().stream().min(Map.Entry.comparingByValue()).get();
+            Map.Entry<String, Integer> minEntry = topFiles.entrySet().stream().min((a, b) -> a.getValue() - b.getValue()).get();
             if (minEntry.getValue() < fileLines) {
                 topFiles.put(fileName, fileLines);
                 topFiles.remove(minEntry.getKey());
@@ -39,7 +41,7 @@ public class Monitor {
         }
         available = true;
         notifyAll();
-//        Verify.endAtomic();
+        Verify.endAtomic();
     }
 
     public synchronized Map<String, Integer> getDistributions() {
