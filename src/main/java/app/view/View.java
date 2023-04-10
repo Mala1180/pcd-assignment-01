@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 
 import javax.swing.*;
 
@@ -35,6 +36,8 @@ public class View extends JFrame implements ActionListener, ModelObserver {
             switch (Event.valueOf(ev.getActionCommand())) {
                 case START:
                     if(!directoryTxt.getText().equals("")
+                            && !Objects.equals(intervalsTxt.getText(), "")
+                            && !Objects.equals(maxLinesTxt.getText(), "")
                             && Integer.parseInt(intervalsTxt.getText()) > 0
                             && Integer.parseInt(maxLinesTxt.getText()) > 0) {
                         controller.setParameters(directoryTxt.getText(), Integer.parseInt(intervalsTxt.getText()), Integer.parseInt(maxLinesTxt.getText()));
@@ -43,7 +46,6 @@ public class View extends JFrame implements ActionListener, ModelObserver {
                 case RESET:
                     resetParameters();
                     break;
-                //TODO: to clear input fields
             }
             controller.processEvent(Event.valueOf(ev.getActionCommand()));
         } catch (Exception ex) {
@@ -74,11 +76,6 @@ public class View extends JFrame implements ActionListener, ModelObserver {
     private void setupGUI() {
         setSize(800, 600);
         setResizable(false);
-
-
-        directoryTxt.setText("/Users/mattia/Desktop/Università/Triennale");
-        intervalsTxt.setText("5");
-        maxLinesTxt.setText("1000");
 
         //------------- START PARAMETERS PANEL -------------
 
@@ -206,7 +203,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
     private void resetParameters() {
         distributionListModel.clear();
         topFilesListModel.clear();
-        controller.setParameters("", 0, 0);
+        controller.resetCounter();
         directoryTxt.setText("");
         intervalsTxt.setText("");
         maxLinesTxt.setText("");

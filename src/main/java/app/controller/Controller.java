@@ -53,32 +53,31 @@ public class Controller {
     }
 
 
+    Set<CounterAgent> agents;
+
     public void startCounting() {
         Set<Path> files;
-
+        if (model.getDirectoryPath() == null) {
+            return;
+        }
         try (Stream<Path> stream = Files.find(Paths.get(model.getDirectoryPath()), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())) {
-            System.out.println(model.getDirectoryPath());
             files = stream.filter(file -> file.toString().endsWith(".java")).collect(toSet());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         int cores = Runtime.getRuntime().availableProcessors() + 1;
-        int filesPerCore;
-        if (files.size() < cores) {
-            filesPerCore = 1;
-        } else {
-            filesPerCore = files.size() / cores;
-        }
+        int filesPerCore = files.size() < cores ? 1 : files.size() / cores;
+
 
         Set<Path> filesPerThread = new HashSet<>();
-        Set<CounterAgent> agents = new HashSet<>();
+        agents = new HashSet<>();
         long startTime = System.currentTimeMillis();
 
         int counter = 0;
         for (Path file : files) {
             counter++;
             filesPerThread.add(file);
-            if (counter % filesPerCore == 0) {
+            if (counter % filesPerCore == 0 || (counter == files.size() && (counter % filesPerCore) != 0)) {
                 CounterAgent agent = new CounterAgent(model, new HashSet<>(filesPerThread));
                 agent.start();
                 agents.add(agent);
@@ -101,10 +100,13 @@ public class Controller {
     }
 
     private void stopCounting() {
-        //TODO: stop all agents
+        for (CounterAgent agent : agents) {
+            agent.setStopped(true);
+        }
+        //resetCounter();
     }
 
-    private void resetCounter() {
-        //TODO: stop all agents, and clear model variables
+    public void resetCounter() {
+        setParameters("", 0, 0);
     }
 }

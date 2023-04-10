@@ -12,6 +12,8 @@ public class CounterAgent extends Thread {
     private final Model model;
     private final Set<Path> filesPerThread;
 
+    private boolean isStopped = false;
+
     public CounterAgent(Model model, Set<Path> filesPerThread) {
         this.model = model;
         this.filesPerThread = filesPerThread;
@@ -21,6 +23,9 @@ public class CounterAgent extends Thread {
         try {
             System.out.println("new thread");
             for (Path file : this.filesPerThread) {
+                if (isStopped) {
+                    break;
+                }
                 int lines = 0;
                 lines += Files.lines(file).count();
                 System.out.println("File " + file.getFileName() + " has lines: " + lines);
@@ -31,11 +36,16 @@ public class CounterAgent extends Thread {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
             }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public void setStopped(boolean isStopped) {
+        this.isStopped = isStopped;
     }
 }
