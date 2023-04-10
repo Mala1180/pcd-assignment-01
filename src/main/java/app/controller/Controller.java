@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -66,23 +68,27 @@ public class Controller {
             throw new RuntimeException(e);
         }
         int cores = Runtime.getRuntime().availableProcessors() + 1;
-        int filesPerCore = files.size() < cores ? 1 : files.size() / cores;
+        int averageFilesPerThread = files.size() < cores ? 1 : files.size() / cores;
 
-
-        Set<Path> filesPerThread = new HashSet<>();
+        List<Path> filesPerThread = new ArrayList<>();
+        int lastThreadFiles = 0;
         agents = new HashSet<>();
         long startTime = System.currentTimeMillis();
 
         int counter = 0;
+
         for (Path file : files) {
-            counter++;
             filesPerThread.add(file);
-            if (counter % filesPerCore == 0 || (counter == files.size() && (counter % filesPerCore) != 0)) {
+
+            if ((counter % averageFilesPerThread == 0 && counter < averageFilesPerThread * (cores - 1)) || counter == files.size() - 1) {
                 CounterAgent agent = new CounterAgent(model, new HashSet<>(filesPerThread));
                 agent.start();
                 agents.add(agent);
+                lastThreadFiles = filesPerThread.size();
+                System.out.println(lastThreadFiles);
                 filesPerThread.clear();
             }
+            counter++;
         }
 
         for (CounterAgent agent : agents) {
@@ -95,7 +101,9 @@ public class Controller {
 
         long stopTime = System.currentTimeMillis();
         System.out.println("Total files: " + files.size());
-        System.out.println("Files per core: " + filesPerCore);
+        System.out.println("Files per core: " + averageFilesPerThread);
+        System.out.println("Files last core: " + lastThreadFiles);
+
         System.out.println("Execution time: " + (stopTime - startTime) + " ms");
     }
 
