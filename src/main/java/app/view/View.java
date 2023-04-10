@@ -132,12 +132,12 @@ public class View extends JFrame implements ActionListener, ModelObserver {
         JPanel dataPanel = new JPanel();
 
         JList<String> distributionList = new JList<>(distributionListModel);
-        distributionList.setFixedCellWidth(200);
-        distributionList.setFixedCellHeight(25);
+        distributionList.setFixedCellWidth(400);
+        distributionList.setFixedCellHeight(35);
 
         JList<String> topFilesList = new JList<>(topFilesListModel);
-        topFilesList.setFixedCellWidth(200);
-        topFilesList.setFixedCellHeight(25);
+        topFilesList.setFixedCellWidth(400);
+        topFilesList.setFixedCellHeight(35);
         topFilesList.setAlignmentX(CENTER_ALIGNMENT);
         distributionList.setAlignmentX(CENTER_ALIGNMENT);
         topFilesList.setAlignmentY(CENTER_ALIGNMENT);
@@ -145,6 +145,15 @@ public class View extends JFrame implements ActionListener, ModelObserver {
         //topFilesList.setAlignmentX(SwingUtilities.CENTER);topFilesList.setAlignmentY(SwingUtilities.CENTER);
         //distributionList.setAlignmentX(SwingUtilities.CENTER);distributionList.setAlignmentY(SwingUtilities.CENTER);
 
+        /*JScrollPane scrollPane_1 = new JScrollPane(topFilesList);
+        Dimension d = topFilesList.getPreferredSize();
+        d.width = 500;
+        scrollPane_1.setPreferredSize(d);
+
+        JScrollPane scrollPane_2 = new JScrollPane(distributionList);
+        Dimension d2 = distributionList.getPreferredSize();
+        d2.width = 500;
+        scrollPane_1.setPreferredSize(d2);*/
 
         /*dataPanel.setAlignmentX(CENTER_ALIGNMENT);
         dataPanel.setAlignmentY(CENTER_ALIGNMENT);*/

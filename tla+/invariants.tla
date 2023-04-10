@@ -5,6 +5,17 @@ EXTENDS TLC, Integers, Sequences
 (*--algorithm invariants
 
 (*--
+
+abbiamo
+    files = array di stringhe
+    counted_files = contatore
+
+    bisogna dividere l'array files in piu parti quanti sono i processi
+
+
+
+
+
 counted_files = intero che conta i file processati fino ad ora
 files = << "main() {print('Hello World!')}",
     "class Test extends Interface { private int test = 0}",
@@ -23,7 +34,7 @@ define
 end define;
 *)
 variables mutex = 1,
-    files = << "file1", "file2", "file3", "file4", "file4", "file5", "file6" >>,
+    files = << "file1", "file2", "file3", "file4", "file4", "file5", "file6", "file7", "file8", "file9", "file10" >>,
     counted_files = 0;
 
 define
