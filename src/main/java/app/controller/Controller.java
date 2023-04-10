@@ -4,6 +4,7 @@ import app.model.CounterAgent;
 import app.model.Model;
 import app.utils.Event;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,22 +54,24 @@ public class Controller {
         }
 
         int cores = Runtime.getRuntime().availableProcessors() + 1;
-        int stringsPerCore = strings.size() < cores ? 1 : strings.size() / cores;
+        int averageStringsPerThread = strings.size() < cores ? 1 : strings.size() / cores;
 
         Set<String> stringsPerThread = new HashSet<>();
         Set<CounterAgent> agents = new HashSet<>();
         long startTime = System.currentTimeMillis();
-
         int counter = 0;
+        int lastThreadFiles = 0;
         for (String string : strings) {
-            counter++;
             stringsPerThread.add(string);
-            if (counter % stringsPerCore == 0 || (counter == strings.size() && (counter % stringsPerCore) != 0)) {
+
+            if ((counter % averageStringsPerThread == 0 && counter < averageStringsPerThread * (cores - 1)) || counter == strings.size() - 1) {
                 CounterAgent agent = new CounterAgent(model, new HashSet<>(stringsPerThread));
                 agent.start();
                 agents.add(agent);
+                lastThreadFiles = stringsPerThread.size();
                 stringsPerThread.clear();
             }
+            counter++;
         }
 
         for (CounterAgent agent : agents) {
@@ -81,7 +84,8 @@ public class Controller {
 
         long stopTime = System.currentTimeMillis();
         System.out.println("Total strings: " + strings.size());
-        System.out.println("Files per core: " + stringsPerCore);
+        System.out.println("Files per core: " + averageStringsPerThread);
+        System.out.println("Last core files: " + lastThreadFiles);
         System.out.println("Execution time: " + (stopTime - startTime) + " ms");
     }
 
