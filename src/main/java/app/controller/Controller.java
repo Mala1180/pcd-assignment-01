@@ -103,7 +103,6 @@ public class Controller {
         for (CounterAgent agent : agents) {
             agent.setStopped(true);
         }
-        //resetCounter();
     }
 
     public void resetCounter() {

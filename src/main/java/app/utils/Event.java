@@ -7,7 +7,6 @@ public enum Event {
     RESET("RESET"),
     OPEN_FILE_DIALOG("OPEN_FILE_DIALOG");
 
-
     private final String command;
 
     Event(String command) {

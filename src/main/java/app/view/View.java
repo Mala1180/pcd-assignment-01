@@ -15,7 +15,6 @@ import javax.swing.*;
 
 public class View extends JFrame implements ActionListener, ModelObserver {
     private final Controller controller;
-
     private final DefaultListModel<String> distributionListModel = new DefaultListModel<>();
     private final DefaultListModel<String> topFilesListModel = new DefaultListModel<>();
 
@@ -35,7 +34,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
         try {
             switch (Event.valueOf(ev.getActionCommand())) {
                 case START:
-                    if(!directoryTxt.getText().equals("")
+                    if (!directoryTxt.getText().equals("")
                             && !Objects.equals(intervalsTxt.getText(), "")
                             && !Objects.equals(maxLinesTxt.getText(), "")
                             && Integer.parseInt(intervalsTxt.getText()) > 0
@@ -139,21 +138,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
         distributionList.setAlignmentX(CENTER_ALIGNMENT);
         topFilesList.setAlignmentY(CENTER_ALIGNMENT);
         distributionList.setAlignmentY(CENTER_ALIGNMENT);
-        //topFilesList.setAlignmentX(SwingUtilities.CENTER);topFilesList.setAlignmentY(SwingUtilities.CENTER);
-        //distributionList.setAlignmentX(SwingUtilities.CENTER);distributionList.setAlignmentY(SwingUtilities.CENTER);
 
-        /*JScrollPane scrollPane_1 = new JScrollPane(topFilesList);
-        Dimension d = topFilesList.getPreferredSize();
-        d.width = 500;
-        scrollPane_1.setPreferredSize(d);
-
-        JScrollPane scrollPane_2 = new JScrollPane(distributionList);
-        Dimension d2 = distributionList.getPreferredSize();
-        d2.width = 500;
-        scrollPane_1.setPreferredSize(d2);*/
-
-        /*dataPanel.setAlignmentX(CENTER_ALIGNMENT);
-        dataPanel.setAlignmentY(CENTER_ALIGNMENT);*/
         dataPanel.setLayout(new BoxLayout(dataPanel, BoxLayout.X_AXIS));
 
         dataPanel.add(distributionList);
@@ -190,7 +175,7 @@ public class View extends JFrame implements ActionListener, ModelObserver {
 
         add(actionPanel, BorderLayout.SOUTH);
 
-        this.setLocationRelativeTo( null );
+        this.setLocationRelativeTo(null);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent ev) {
