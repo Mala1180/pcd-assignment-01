@@ -13,11 +13,8 @@ public class CounterAgent extends Thread {
     }
 
     public void run() {
-        System.out.println("new thread");
         for (String string : this.stringsPerThread) {
             int chars = string.length();
-//            System.out.println("Chars: " + chars);
-            //model.update();
             model.updateCounter(string, chars);
         }
 
