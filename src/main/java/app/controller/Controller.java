@@ -11,7 +11,6 @@ import java.util.Set;
 
 public class Controller {
 
-
     private final Model model;
 
     public Controller(Model model) {
@@ -29,12 +28,6 @@ public class Controller {
                     switch (event) {
                         case START:
                             startCounting();
-                            break;
-                        case STOP:
-                            stopCounting();
-                            break;
-                        case RESET:
-                            resetCounter();
                             break;
                     }
                 } catch (Exception ex) {
@@ -60,12 +53,7 @@ public class Controller {
         }
 
         int cores = Runtime.getRuntime().availableProcessors() + 1;
-        int stringsPerCore;
-        if (strings.size() < cores) {
-            stringsPerCore = 1;
-        } else {
-            stringsPerCore = strings.size() / cores;
-        }
+        int stringsPerCore = strings.size() < cores ? 1 : strings.size() / cores;
 
         Set<String> stringsPerThread = new HashSet<>();
         Set<CounterAgent> agents = new HashSet<>();
@@ -75,7 +63,7 @@ public class Controller {
         for (String string : strings) {
             counter++;
             stringsPerThread.add(string);
-            if (counter % stringsPerCore == 0) {
+            if (counter % stringsPerCore == 0 || (counter == strings.size() && (counter % stringsPerCore) != 0)) {
                 CounterAgent agent = new CounterAgent(model, new HashSet<>(stringsPerThread));
                 agent.start();
                 agents.add(agent);
@@ -97,11 +85,4 @@ public class Controller {
         System.out.println("Execution time: " + (stopTime - startTime) + " ms");
     }
 
-    private void stopCounting() {
-        //TODO: stop all agents
-    }
-
-    private void resetCounter() {
-        //TODO: stop all agents, and clear model variables
-    }
 }
