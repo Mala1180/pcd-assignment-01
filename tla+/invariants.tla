@@ -11,8 +11,6 @@ variables mutex = 1,
     i = 1;
 
 define
-    (*--MutualExclusion == []~(pc["p1"] = "CS" /\ pc["p2"] = "CS" /\
-                           pc["p3"] = "CS" /\ pc["p4"] = "CS" /\ pc["p5"] = "CS")*)
     MutualExclusion == []~((pc["p1"] = "CS" /\ pc["p2"] = "CS") \/
                            (pc["p1"] = "CS" /\ pc["p3"] = "CS") \/
                            (pc["p2"] = "CS" /\ pc["p3"] = "CS") \/
@@ -45,10 +43,10 @@ begin MainLoop:
     wait(mutex);
 
     CS:
-    \*if i <= Len(files) then
+    \* if i <= Len(files) then
     updateCounters(Len(files[i]));
-    \*else skip;
-    \*end if;
+    \* else skip;
+    \* end if;
     i := i + 1;
     signal(mutex);
 
