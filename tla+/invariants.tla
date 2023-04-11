@@ -2,46 +2,23 @@
 
 EXTENDS TLC, Integers, Sequences
 
-(*--algorithm invariants
+(*--algorithm critical_section
 
-(*--
-
-abbiamo
-    files = array di stringhe
-    counted_files = contatore
-
-    bisogna dividere l'array files in piu parti quanti sono i processi
-
-
-
-
-
-counted_files = intero che conta i file processati fino ad ora
-files = << "main() {print('Hello World!')}",
-    "class Test extends Interface { private int test = 0}",
-    "interface Interface { void printHelloWorld(); }" >>;
-
-counted_files SEMPRE >= di Len(files)
-counted_files PRIMA O POI = di Len(files) // lost update
-
-N Thread (process) che leggono da files e scrivono in counted_files
-define
-    NoOverflowCountedFiles == (counted_files <= Len(files))
-\*    NoLostUpdates == <>(counted_files = Len(files))
-
-    NoLostUpdates == \A t \in threads: <>(counted_files = Len(files))
-
-end define;
-*)
 variables mutex = 1,
-    files = << "file1", "file2", "file3", "file4", "file4", "file5", "file6", "file7", "file8", "file9", "file10" >>,
-    counted_files = 0;
+    files = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>,
+    counted_files = 0,
+    counted_chars = 0,
+    i = 1;
 
 define
-    MutualExclusion == []~(pc["p1"] = "CS" /\ pc["p2"] = "CS" /\
-                           pc["p3"] = "CS" /\ pc["p4"] = "CS" /\ pc["p5"] = "CS")
-    ProperFinalValue == <>(counted_files = Len(files))
-    testProperty == [](5 = Len(files[1]))
+    (*--MutualExclusion == []~(pc["p1"] = "CS" /\ pc["p2"] = "CS" /\
+                           pc["p3"] = "CS" /\ pc["p4"] = "CS" /\ pc["p5"] = "CS")*)
+    MutualExclusion == []~((pc["p1"] = "CS" /\ pc["p2"] = "CS") \/
+                           (pc["p1"] = "CS" /\ pc["p3"] = "CS") \/
+                           (pc["p2"] = "CS" /\ pc["p3"] = "CS") \/
+                           (pc["p1"] = "CS" /\ pc["p2"] = "CS" /\ pc["p3"] = "CS"))
+    ProperFinalFileCounter == <>(counted_files = Len(files))
+    ProperFinalCharCounter == <>(counted_chars = Len(files) * Len(files[0]))
 end define;
 
 macro wait(s) begin
@@ -54,20 +31,28 @@ macro signal(s) begin
 end macro;
 
 
-macro updateCountedFiles() begin
+macro updateCounters(n) begin
+  counted_chars := counted_chars + n;
   counted_files := counted_files + 1;
 end macro;
 
 
-fair process thread \in {"p1", "p2", "p3", "p4", "p5"}
+fair process thread \in {"p1", "p2", "p3"}
 begin MainLoop:
-  while counted_files < Len(files) do
 
+  while counted_files < Len(files) do
     NCS: skip;
     wait(mutex);
 
-    CS: updateCountedFiles();
+    CS:
+    \*if i <= Len(files) then
+    updateCounters(Len(files[i]));
+    \*else skip;
+    \*end if;
+    i := i + 1;
     signal(mutex);
+
+
   end while;
 end process;
 
