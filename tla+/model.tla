@@ -1,8 +1,8 @@
-------------------------- MODULE invariants -------------------------
+------------------------- MODULE model -------------------------
 
 EXTENDS TLC, Integers, Sequences
 
-(*--algorithm critical_section
+(*--algorithm model
 
 variables mutex = 1,
     files = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>,
@@ -57,40 +57,51 @@ end process;
 
 end algorithm;*)
 
-\* BEGIN TRANSLATION (chksum(pcal) = "b4bc2ab9" /\ chksum(tla) = "3cb8c9d8")
-VARIABLES mutex, files, counted_files, pc
+\* BEGIN TRANSLATION (chksum(pcal) = "1ab55dcd" /\ chksum(tla) = "eed9e343")
+VARIABLES mutex, files, counted_files, counted_chars, i, pc
 
 (* define statement *)
-MutualExclusion == []~(pc["p1"] = "CS" /\ pc["p2"] = "CS" /\
-                       pc["p3"] = "CS" /\ pc["p4"] = "CS" /\ pc["p5"] = "CS")
-ProperFinalValue == <>(counted_files = Len(files))
+MutualExclusion == []~((pc["p1"] = "CS" /\ pc["p2"] = "CS") \/
+                       (pc["p1"] = "CS" /\ pc["p3"] = "CS") \/
+                       (pc["p2"] = "CS" /\ pc["p3"] = "CS") \/
+                       (pc["p1"] = "CS" /\ pc["p2"] = "CS" /\ pc["p3"] = "CS"))
+ProperFinalFileCounter == <>(counted_files = Len(files))
+ProperFinalCharCounter == <>(counted_chars = Len(files) * Len(files[1]))
 
 
-vars == << mutex, files, counted_files, pc >>
+vars == << mutex, files, counted_files, counted_chars, i, pc >>
 
-ProcSet == ({"p1", "p2", "p3", "p4", "p5"})
+ProcSet == ({"p1", "p2", "p3"})
 
 Init == (* Global variables *)
         /\ mutex = 1
-        /\ files = << "file1", "file2", "file3", "file4", "file4", "file5", "file6" >>
+        /\ files = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>
         /\ counted_files = 0
+        /\ counted_chars = 0
+        /\ i = 1
         /\ pc = [self \in ProcSet |-> "MainLoop"]
 
 MainLoop(self) == /\ pc[self] = "MainLoop"
                   /\ IF counted_files < Len(files)
                         THEN /\ pc' = [pc EXCEPT ![self] = "NCS"]
                         ELSE /\ pc' = [pc EXCEPT ![self] = "Done"]
-                  /\ UNCHANGED << mutex, files, counted_files >>
+                  /\ UNCHANGED << mutex, files, counted_files, counted_chars, 
+                                  i >>
 
 NCS(self) == /\ pc[self] = "NCS"
              /\ TRUE
              /\ mutex > 0
              /\ mutex' = mutex - 1
              /\ pc' = [pc EXCEPT ![self] = "CS"]
-             /\ UNCHANGED << files, counted_files >>
+             /\ UNCHANGED << files, counted_files, counted_chars, i >>
 
 CS(self) == /\ pc[self] = "CS"
-            /\ counted_files' = counted_files + 1
+            /\ IF i <= Len(files)
+                  THEN /\ counted_chars' = counted_chars + (Len(files[i]))
+                       /\ counted_files' = counted_files + 1
+                  ELSE /\ TRUE
+                       /\ UNCHANGED << counted_files, counted_chars >>
+            /\ i' = i + 1
             /\ mutex' = mutex + 1
             /\ pc' = [pc EXCEPT ![self] = "MainLoop"]
             /\ files' = files
@@ -101,11 +112,11 @@ thread(self) == MainLoop(self) \/ NCS(self) \/ CS(self)
 Terminating == /\ \A self \in ProcSet: pc[self] = "Done"
                /\ UNCHANGED vars
 
-Next == (\E self \in {"p1", "p2", "p3", "p4", "p5"}: thread(self))
+Next == (\E self \in {"p1", "p2", "p3"}: thread(self))
            \/ Terminating
 
 Spec == /\ Init /\ [][Next]_vars
-        /\ \A self \in {"p1", "p2", "p3", "p4", "p5"} : WF_vars(thread(self))
+        /\ \A self \in {"p1", "p2", "p3"} : WF_vars(thread(self))
 
 Termination == <>(\A self \in ProcSet: pc[self] = "Done")
 
