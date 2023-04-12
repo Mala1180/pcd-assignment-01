@@ -5,8 +5,8 @@ EXTENDS TLC, Integers, Sequences
 (*--algorithm model
 
 variables mutex = 1,
-    files = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>,
-    counted_files = 0,
+    strings = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>,
+    counted_strings = 0,
     counted_chars = 0,
     i = 1;
 
@@ -15,8 +15,8 @@ define
                            (pc["p1"] = "CS" /\ pc["p3"] = "CS") \/
                            (pc["p2"] = "CS" /\ pc["p3"] = "CS") \/
                            (pc["p1"] = "CS" /\ pc["p2"] = "CS" /\ pc["p3"] = "CS"))
-    ProperFinalFileCounter == <>(counted_files = Len(files))
-    ProperFinalCharCounter == <>(counted_chars = Len(files) * Len(files[1]))
+    ProperFinalFilesCounter == <>(counted_strings = Len(strings))
+    ProperFinalCharsCounter == <>(counted_chars = Len(strings) * Len(strings[1]))
 end define;
 
 macro wait(s) begin
@@ -31,20 +31,20 @@ end macro;
 
 macro updateCounters(n) begin
   counted_chars := counted_chars + n;
-  counted_files := counted_files + 1;
+  counted_strings := counted_strings + 1;
 end macro;
 
 
 fair process thread \in {"p1", "p2", "p3"}
 begin MainLoop:
 
-  while counted_files < Len(files) do
+  while counted_strings < Len(strings) do
     NCS: skip;
     wait(mutex);
 
     CS:
-    if i <= Len(files) then
-    updateCounters(Len(files[i]));
+    if i <= Len(strings) then
+    updateCounters(Len(strings[i]));
     else skip;
     end if;
     i := i + 1;
