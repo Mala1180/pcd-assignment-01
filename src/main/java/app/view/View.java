@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.swing.*;
@@ -62,9 +65,10 @@ public class View extends JFrame implements ActionListener, ModelObserver {
                 model.getDistributions().forEach((k, v) -> {
                     this.distributionListModel.addElement(k + " " + v);
                 });
-                model.getTopFiles().forEach((k, v) -> {
-                    this.topFilesListModel.addElement(k + " " + v);
-                });
+                model.getTopFiles().entrySet()
+                        .stream()
+                        .sorted((a, b) -> b.getValue() - a.getValue())
+                        .forEach(entry -> this.topFilesListModel.addElement(entry.getKey() + " " + entry.getValue()));
             });
         } catch (Exception ex) {
             ex.printStackTrace();
