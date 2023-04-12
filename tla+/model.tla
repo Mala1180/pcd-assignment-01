@@ -57,54 +57,54 @@ end process;
 
 end algorithm;*)
 
-\* BEGIN TRANSLATION (chksum(pcal) = "1ab55dcd" /\ chksum(tla) = "eed9e343")
-VARIABLES mutex, files, counted_files, counted_chars, i, pc
+\* BEGIN TRANSLATION (chksum(pcal) = "b8438cf8" /\ chksum(tla) = "93047db1")
+VARIABLES mutex, strings, counted_strings, counted_chars, i, pc
 
 (* define statement *)
 MutualExclusion == []~((pc["p1"] = "CS" /\ pc["p2"] = "CS") \/
                        (pc["p1"] = "CS" /\ pc["p3"] = "CS") \/
                        (pc["p2"] = "CS" /\ pc["p3"] = "CS") \/
                        (pc["p1"] = "CS" /\ pc["p2"] = "CS" /\ pc["p3"] = "CS"))
-ProperFinalFileCounter == <>(counted_files = Len(files))
-ProperFinalCharCounter == <>(counted_chars = Len(files) * Len(files[1]))
+ProperFinalFilesCounter == <>(counted_strings = Len(strings))
+ProperFinalCharsCounter == <>(counted_chars = Len(strings) * Len(strings[1]))
 
 
-vars == << mutex, files, counted_files, counted_chars, i, pc >>
+vars == << mutex, strings, counted_strings, counted_chars, i, pc >>
 
 ProcSet == ({"p1", "p2", "p3"})
 
 Init == (* Global variables *)
         /\ mutex = 1
-        /\ files = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>
-        /\ counted_files = 0
+        /\ strings = << "file0", "file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9">>
+        /\ counted_strings = 0
         /\ counted_chars = 0
         /\ i = 1
         /\ pc = [self \in ProcSet |-> "MainLoop"]
 
 MainLoop(self) == /\ pc[self] = "MainLoop"
-                  /\ IF counted_files < Len(files)
+                  /\ IF counted_strings < Len(strings)
                         THEN /\ pc' = [pc EXCEPT ![self] = "NCS"]
                         ELSE /\ pc' = [pc EXCEPT ![self] = "Done"]
-                  /\ UNCHANGED << mutex, files, counted_files, counted_chars, 
-                                  i >>
+                  /\ UNCHANGED << mutex, strings, counted_strings, 
+                                  counted_chars, i >>
 
 NCS(self) == /\ pc[self] = "NCS"
              /\ TRUE
              /\ mutex > 0
              /\ mutex' = mutex - 1
              /\ pc' = [pc EXCEPT ![self] = "CS"]
-             /\ UNCHANGED << files, counted_files, counted_chars, i >>
+             /\ UNCHANGED << strings, counted_strings, counted_chars, i >>
 
 CS(self) == /\ pc[self] = "CS"
-            /\ IF i <= Len(files)
-                  THEN /\ counted_chars' = counted_chars + (Len(files[i]))
-                       /\ counted_files' = counted_files + 1
+            /\ IF i <= Len(strings)
+                  THEN /\ counted_chars' = counted_chars + (Len(strings[i]))
+                       /\ counted_strings' = counted_strings + 1
                   ELSE /\ TRUE
-                       /\ UNCHANGED << counted_files, counted_chars >>
+                       /\ UNCHANGED << counted_strings, counted_chars >>
             /\ i' = i + 1
             /\ mutex' = mutex + 1
             /\ pc' = [pc EXCEPT ![self] = "MainLoop"]
-            /\ files' = files
+            /\ UNCHANGED strings
 
 thread(self) == MainLoop(self) \/ NCS(self) \/ CS(self)
 
