@@ -121,6 +121,10 @@ replay_pid*
 **/build/
 !src/**/build/
 
+## JPF Runner
+!jpf-runner/build/
+!jpf-runner/build/*.jar
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
@@ -144,3 +148,8 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,gradle,java
+
+/sources
+
+src/tla+/states
+tla+/*.cfg

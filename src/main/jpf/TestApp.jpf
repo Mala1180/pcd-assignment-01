@@ -1,4 +1,4 @@
-target = lab02.jpf.TestScenarios
+target = jpf.TestApp
 
 classpath=build/classes/java/main
 

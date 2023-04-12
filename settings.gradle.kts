@@ -1,2 +1,2 @@
-rootProject.name = "jpf-template-project"
+rootProject.name = "pcd-assignment-01"
 
