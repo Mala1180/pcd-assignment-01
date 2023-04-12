@@ -151,5 +151,5 @@ gradle-app.setting
 
 /sources
 
-tla+/states
+src/tla+/states
 tla+/*.cfg
