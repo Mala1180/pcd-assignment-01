@@ -153,3 +153,6 @@ gradle-app.setting
 
 src/tla+/states
 tla+/*.cfg
+
+# Mac files
+.DS_Store
